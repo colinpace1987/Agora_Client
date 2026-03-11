@@ -1,25 +1,78 @@
-import logo from './logo.svg';
+import { useState } from 'react'
 import './App.css';
+import Landing from "./Landing.js";
+import Home from "./Home.js";
 
 function App() {
+  let [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  function buttonToLogout() {
+    setIsLoggedIn(false);
+  }
+
+  function formToFetchRegister(email, password) {
+    return fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Registration failed");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Registration successful:", data);
+        return data;
+      })
+      .catch((err) => {
+        console.error(err.message);
+        throw err;
+      });
+  }
+
+  function formToFetchLogin(email, password) {
+    return fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Login failed");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Login successful:", data);
+        setIsLoggedIn(true);
+        return data;
+      })
+      .catch((err) => {
+        console.error(err.message);
+        throw err;
+      });
+  }
+  
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {
+        isLoggedIn === true ? 
+
+          <Home 
+          
+            buttonToLogout = { buttonToLogout }
+
+          /> :
+
+            <Landing 
+            
+              formToFetchRegister = { formToFetchRegister }
+              formToFetchLogin = { formToFetchLogin }
+            
+            />
+
+      }
     </div>
-  );
+  )
 }
 
 export default App;
