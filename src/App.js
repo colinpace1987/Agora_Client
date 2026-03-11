@@ -4,7 +4,7 @@ import Landing from "./Landing.js";
 import Home from "./Home.js";
 
 function App() {
-  let [isLoggedIn, setIsLoggedIn] = useState(false);
+  let [isLoggedIn, setIsLoggedIn] = useState(true);
 
   function buttonToLogout() {
     setIsLoggedIn(false);

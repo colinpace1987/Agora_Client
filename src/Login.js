@@ -28,7 +28,6 @@ export default function Login({ formToFetchLogin }) {
     }
 
     setError("");
-    //console.log("Login attempt:", form);
     formToFetchLogin(form.email, form.password, "login");
   }
 

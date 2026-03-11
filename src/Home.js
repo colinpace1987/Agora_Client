@@ -1,15 +1,70 @@
+import { useState } from 'react'
+import "./Home.css";
+import Feed from "./Feed.js";
+import Profile from "./Profile.js";
+import Forum from "./Forum.js";
+
 function Home( { buttonToLogout } ) {
+  let [display, setDisplay] = useState("home");
+
   function logout() {
-    buttonToLogout();
+    return buttonToLogout();
+  }
+
+  function handleHomeClick() {
+    return setDisplay("home");
+  }
+
+  function handleProfileClick() {
+    return setDisplay("profile");
+  }
+
+  function handleForumClick() {
+    return setDisplay("forum");
   }
   
   return (
-    <div>
-      <h1>Home Page</h1>
+    <div id = "home">
+      <section id = "navAndTitle">
+        <h1 id = "title">Agora</h1>
 
-      <button onClick={logout}>
-        Logout
-      </button>
+        <nav>
+          <ul id="sidebarOptions">
+            <li><button className="option" onClick = {handleHomeClick}>Home</button></li>
+            <li><button className="option" onClick = {handleProfileClick}>Profile</button></li>
+            <li><button className="option" onClick = {handleForumClick}>Forum</button></li>
+          </ul>
+        </nav>
+      </section>
+
+
+      <section id = "main">
+
+        {
+          display === "home" ? 
+
+            <Feed />
+
+              : display === "profile" ?
+
+                <Profile /> 
+
+              : display === "forum" ?
+
+                <Forum />
+
+              : <Feed />
+        }
+
+
+      </section>
+
+
+      <section id = "api">
+        <button id = "logoutButton" onClick={logout}>
+          Logout
+        </button>
+      </section>
     </div>
   )
 }

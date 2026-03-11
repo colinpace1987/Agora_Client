@@ -48,7 +48,7 @@ Gentle metallic hint for small details or micro-interactions; unusual and sophis
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   max-width: 300px;
-    margin: 0.5rem auto; /* Center buttons with some spacing */
+  margin: 0.5rem auto; /* Center buttons with some spacing */
 }
 
 /* Hover effect */
@@ -73,10 +73,6 @@ Gentle metallic hint for small details or micro-interactions; unusual and sophis
     width: 100vw;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-/* 
-#landing > section {
-    flex: 70% 30% 0%; 
-} */
 
 img {
     height: 60%;
