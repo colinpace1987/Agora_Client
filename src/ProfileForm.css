@@ -1,19 +1,10 @@
-:root {
-  --obsidian-blue: #0F1C2C;
-  --muted-jade: #4B6A57;
-  --warm-sand: #D9C9B3;
-  --coral-rust: #D9735D;
-  --iridescent-lavender: #A89BC8;
-  --faded-gold: #C2A05C;
-}
-
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(15, 28, 44, 0.85); /* semi-transparent obsidian blue */
+  background-color: rgba(20, 34, 53, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,53 +12,54 @@
 }
 
 .modal {
-  background-color: var(--warm-sand);
-  padding: 2.5rem;
-  border-radius: 16px;
-  width: 450px;
-  max-width: 95%;
-  box-shadow: 0 8px 24px rgba(15, 28, 44, 0.4);
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  color: var(--obsidian-blue);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  background-color: var(--card);
+  padding: 2.6rem;
+  border-radius: 24px;
+  width: 460px;
+  max-width: 94%;
+  box-shadow: var(--shadow-strong);
+  font-family: "Inter", "Helvetica", sans-serif;
+  color: var(--ink);
 }
 
-h2 {
-  margin-bottom: 1.5rem;
-  color: var(--obsidian-blue);
+.modal h2 {
+  margin: 0 0 1.5rem;
+  color: var(--ink);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .step {
   margin-bottom: 2rem;
 }
 
-label {
+.step label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: var(--muted-jade);
+  color: var(--jade);
 }
 
-input, textarea {
+.step input,
+.step textarea {
   width: 100%;
-  padding: 0.6rem 0.8rem;
-  border-radius: 8px;
-  border: 1px solid var(--muted-jade);
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(20, 34, 53, 0.18);
   background-color: #fff;
-  color: var(--obsidian-blue);
+  color: var(--ink);
   font-size: 0.95rem;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-input:focus, textarea:focus {
+.step input:focus,
+.step textarea:focus {
   outline: none;
-  border-color: var(--iridescent-lavender);
-  box-shadow: 0 0 6px rgba(168, 155, 200, 0.4);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(194, 160, 92, 0.2);
 }
 
-textarea {
+.step textarea {
   resize: vertical;
 }
 
@@ -78,63 +70,63 @@ textarea {
 }
 
 .quality-btn {
-  border: 1px solid var(--muted-jade);
-  border-radius: 50px;
+  border: 1px solid rgba(20, 34, 53, 0.2);
+  border-radius: 999px;
   padding: 0.5rem 1rem;
-  background-color: #f7f2ed;
+  background-color: rgba(75, 106, 87, 0.08);
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.2s ease;
-  color: var(--obsidian-blue);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: var(--ink);
 }
 
 .quality-btn:hover {
-  border-color: var(--iridescent-lavender);
-  box-shadow: 0 2px 6px rgba(168, 155, 200, 0.25);
+  border-color: var(--gold);
+  box-shadow: 0 2px 8px rgba(20, 34, 53, 0.18);
+  transform: translateY(-1px);
 }
 
 .quality-btn.selected {
-  background-color: var(--coral-rust);
+  background-color: var(--coral);
   color: #fff;
-  border-color: var(--coral-rust);
+  border-color: var(--coral);
 }
 
 .navigation {
   display: flex;
   justify-content: space-between;
+  gap: 0.8rem;
 }
 
 .navigation button {
   padding: 0.6rem 1.4rem;
-  border-radius: 12px;
+  border-radius: 999px;
   border: none;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .navigation button:hover {
-  box-shadow: 0 4px 12px rgba(15, 28, 44, 0.2);
+  box-shadow: 0 4px 12px rgba(20, 34, 53, 0.2);
+  transform: translateY(-1px);
 }
 
 .navigation button:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .navigation button:first-child {
-  background-color: var(--iridescent-lavender);
-  color: #fff;
+  background-color: var(--mist);
+  color: var(--ink);
 }
 
 .navigation button:last-child {
-  background-color: var(--coral-rust);
+  background-color: var(--coral);
   color: #fff;
 }
 
-.navigation button:first-child:hover {
-  background-color: #9a8fc0;
-}
-
 .navigation button:last-child:hover {
-  background-color: #d35a43;
+  background-color: var(--gold);
+  color: var(--ink);
 }

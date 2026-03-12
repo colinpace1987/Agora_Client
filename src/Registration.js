@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Registration.css";
 
 export default function Registration( { formToFetchRegister } ) {
   let [toLogin, setToLogin] = useState(false);

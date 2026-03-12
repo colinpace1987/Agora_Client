@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import "./ProfileInfo.css";
+import FollowButton from "./FollowButton";
 
 function ProfileInfo({ user, fillInfo, refreshTrigger }) {
   const [profile, setProfile] = useState(null);
@@ -12,7 +14,7 @@ function ProfileInfo({ user, fillInfo, refreshTrigger }) {
       const data = await res.json();
       setProfile(data);
     } catch (err) {
-      console.log("No profile yet");
+      console.log("No profile yet"); 
       setProfile(null);
     }
   };
@@ -33,12 +35,19 @@ function ProfileInfo({ user, fillInfo, refreshTrigger }) {
     fetchProfile();
   }, [user, refreshTrigger]); // re-fetch when refreshTrigger changes
   return (
-    <div>
+    <div className="profile-info">
       {user && (
         <button id="completeProfile" onClick={fillInfo}>
           Complete Profile
         </button>
       )}
+{/* 
+      {user.id !== profileId && (
+        <FollowButton
+          user={user.id}
+          profileId={profileUser.id}
+        />
+      )} */}
 
       {profile ? (
         <div>

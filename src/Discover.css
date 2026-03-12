@@ -1,0 +1,237 @@
+.discover {
+  --ink: #142235;
+  --sand: #f5efe4;
+  --mist: #e4e9ef;
+  --jade: #4b6a57;
+  --coral: #d9735d;
+  --gold: #c2a05c;
+  --slate: #5a6472;
+  --card: #ffffff;
+  padding: 2.5rem 3rem;
+  min-height: 100%;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--sand), var(--mist));
+  font-family: "Libre Baskerville", "Georgia", serif;
+  overflow: auto;
+}
+
+.discover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.discover-header h1 {
+  margin: 0.3rem 0 0.5rem;
+  font-size: 2.8rem;
+  letter-spacing: 0.02em;
+}
+
+.discover-eyebrow {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--slate);
+  margin: 0;
+}
+
+.discover-subtitle {
+  margin: 0;
+  color: var(--slate);
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.discover-search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 260px;
+  font-family: "Inter", "Helvetica", sans-serif;
+}
+
+.discover-search label {
+  font-size: 0.85rem;
+  color: var(--slate);
+}
+
+.discover-search input {
+  border-radius: 999px;
+  border: 1px solid rgba(20, 34, 53, 0.15);
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.discover-search span {
+  font-size: 0.85rem;
+  color: var(--slate);
+}
+
+.discover-content {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.discover-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.discover-status {
+  font-family: "Inter", "Helvetica", sans-serif;
+  color: var(--slate);
+}
+
+.discover-status.error {
+  color: var(--coral);
+}
+
+.discover-card {
+  border: 1px solid rgba(20, 34, 53, 0.12);
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  background: var(--card);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  box-shadow: 0 10px 24px rgba(20, 34, 53, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.discover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(20, 34, 53, 0.14);
+}
+
+.discover-card.active {
+  border-color: var(--gold);
+  box-shadow: 0 14px 30px rgba(194, 160, 92, 0.25);
+}
+
+.discover-card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.discover-card-heading h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.discover-card-heading span {
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 0.85rem;
+  color: var(--jade);
+}
+
+.discover-card p {
+  margin: 0;
+  font-family: "Inter", "Helvetica", sans-serif;
+  color: var(--slate);
+  line-height: 1.5;
+}
+
+.discover-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.discover-tags span {
+  background: rgba(75, 106, 87, 0.12);
+  color: var(--jade);
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+
+.discover-empty-tag {
+  background: rgba(217, 115, 93, 0.15);
+  color: var(--coral);
+}
+
+.discover-cta {
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 0.85rem;
+  color: var(--coral);
+}
+
+.discover-detail {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid rgba(20, 34, 53, 0.12);
+  box-shadow: 0 18px 40px rgba(20, 34, 53, 0.12);
+  min-height: 320px;
+}
+
+.discover-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.discover-detail-header h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.8rem;
+}
+
+.discover-detail-header p {
+  margin: 0;
+  color: var(--slate);
+  font-family: "Inter", "Helvetica", sans-serif;
+}
+
+.discover-detail-body {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.discover-detail-body h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.discover-detail-body p {
+  margin: 0;
+  font-family: "Inter", "Helvetica", sans-serif;
+  line-height: 1.6;
+}
+
+.discover-empty {
+  text-align: center;
+  font-family: "Inter", "Helvetica", sans-serif;
+  color: var(--slate);
+  padding: 3rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .discover {
+    padding: 2rem;
+  }
+
+  .discover-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .discover-content {
+    grid-template-columns: 1fr;
+  }
+}

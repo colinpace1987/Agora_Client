@@ -22,7 +22,8 @@ export default function Profile({ user }) {
       <ProfileInfo 
         user={user} 
         refreshTrigger={refreshProfile} 
-        fillInfo={fillInfo} 
+        fillInfo={fillInfo}
+
       />
 
       {/* Conditionally render ProfileForm as modal */}

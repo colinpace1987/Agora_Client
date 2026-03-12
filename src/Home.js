@@ -3,6 +3,7 @@ import "./Home.css";
 import Feed from "./Feed.js";
 import Profile from "./Profile.js";
 import Forum from "./Forum.js";
+import Discover from "./Discover.js";
 
 function Home( { buttonToLogout, user } ) {
   let [display, setDisplay] = useState("home");
@@ -22,6 +23,10 @@ function Home( { buttonToLogout, user } ) {
   function handleForumClick() {
     return setDisplay("forum");
   }
+
+  function handleDiscoverClick() {
+    return setDisplay("discover");
+  }
   
   return (
     <div id = "home">
@@ -33,6 +38,7 @@ function Home( { buttonToLogout, user } ) {
             <li><button className="option" onClick = {handleHomeClick}>Home</button></li>
             <li><button className="option" onClick = {handleProfileClick}>Profile</button></li>
             <li><button className="option" onClick = {handleForumClick}>Forum</button></li>
+            <li><button className="option" onClick = {handleDiscoverClick}>Discover</button></li>
           </ul>
         </nav>
       </section>
@@ -46,6 +52,8 @@ function Home( { buttonToLogout, user } ) {
             <Profile user={user} /> :
             display === "forum" ?
             <Forum /> :
+            display === "discover" ?
+            <Discover user={user} /> :
             <Feed user={user} />
         }
       </section>

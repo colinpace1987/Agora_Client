@@ -1,30 +1,46 @@
+.profile-info {
+  padding: 2.5rem 3rem;
+  background: linear-gradient(135deg, var(--sand), var(--mist));
+  min-height: 100%;
+}
+
+.profile-info h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.profile-info p {
+  margin: 0.3rem 0;
+  font-family: "Inter", "Helvetica", sans-serif;
+  color: var(--slate);
+}
+
 #completeProfile {
-  background-color: #0a4d9e; /* Obsidian Blue */
-  color: #D9735D; /* Coral Rust text */
-  border: 2px solid #D9735D;
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px; /* pill shape */
+  background-color: var(--coral);
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 999px;
   font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 6px 14px rgba(20, 34, 53, 0.18);
 }
 
-/* Hover */
 #completeProfile:hover {
-  background-color: #D9735D;
-  color: #0F1C2C;
-  box-shadow: 0 4px 10px rgba(15, 28, 44, 0.25);
+  background-color: var(--gold);
+  color: var(--ink);
+  transform: translateY(-1px);
 }
 
-/* Click */
 #completeProfile:active {
-  transform: scale(0.97);
+  transform: translateY(0);
 }
 
-/* Optional subtle focus glow */
 #completeProfile:focus {
   outline: none;
-  box-shadow: 0 0 6px rgba(217,115,93,0.6);
+  box-shadow: 0 0 0 3px rgba(194, 160, 92, 0.35);
 }

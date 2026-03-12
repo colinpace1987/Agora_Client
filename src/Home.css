@@ -1,146 +1,103 @@
-/* ==========================
-   Layout
-========================== */
 #home {
-  display: flex;
-  flex-direction: row;
-  height: 100vh; /* ensure full viewport height */
-}
-
-#navAndTitle {
-  flex: 2;
-  background-color: #0F1C2C; /* Obsidian Blue */
-  padding-left: 2%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-#main {
-  flex: 6; 
-  background-color: #d2d2d2; /* light neutral */
-}
-
-#api {
-  flex: 2;
-  background-color: #4B6A57; /* Muted Jade */
-  display: flex;
-  justify-content: center;
-}
-
-/* ==========================
-   Typography
-========================== */
-#title {
-  color: #c3c3c3;
-  font-size: 50px;
-  margin-bottom: 100px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-}
-
-/* ==========================
-   Buttons
-========================== */
-#logoutButton {
-  background-color: #D9735D; /* Coral Rust */
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #D9735D;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  max-width: 300px;
-  max-height: 50px;
-}
-
-#logoutButton:hover {
-  background-color: #A89BC8; /* Iridescent Lavender */
-  border-color: #A89BC8;
-  color: #0F1C2C; /* Obsidian Blue text */
-}
-
-#logoutButton:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-}
-
-/* ==========================
-   Sidebar
-========================== */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 250px;
-  background-color: #0F1C2C; /* Obsidian Blue */
-  padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(400px, 3fr) minmax(180px, 0.8fr);
   height: 100vh;
 }
 
-.sidebar-options {
+#navAndTitle {
+  background-color: #0f1c2c;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#main {
+  background: linear-gradient(135deg, var(--sand), var(--mist));
+  overflow: auto;
+}
+
+#api {
+  background: rgba(75, 106, 87, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2.5rem 1rem;
+}
+
+#title {
+  color: #f3f0e8;
+  font-size: 2.6rem;
+  margin: 0;
+  font-family: "Libre Baskerville", "Georgia", serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+#logoutButton {
+  background-color: var(--coral);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.6rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 6px 16px rgba(20, 34, 53, 0.18);
+}
+
+#logoutButton:hover {
+  background-color: var(--gold);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+#logoutButton:active {
+  transform: translateY(0);
+}
+
+#sidebarOptions {
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 0;
-  margin: 0;
 }
 
 .option {
   background-color: transparent;
-  border: none;
-  color: #fff;
+  border: 1px solid transparent;
+  color: #f5efe4;
   text-align: left;
-  font-family: 'Inter', sans-serif;
-  font-size: 30px;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 1.1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background 0.2s ease;
-  margin-bottom: 30px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .option:hover,
 .option:focus {
-  background-color: #4B6A57; /* Muted Jade highlight */
+  background-color: rgba(217, 115, 93, 0.15);
+  border-color: rgba(217, 115, 93, 0.35);
   outline: none;
 }
 
-.option.selected {
-  background-color: #D9735D; /* Coral Rust */
-  color: white;
-  border-color: #D9735D;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
-}
-
-/* Override for specific sidebar list items */
-#sidebarOptions > ul > li > button {
-  font-size: 50px;
-}
-
-/* Remove bullets globally */
 li {
   list-style: none;
 }
 
-/* ==========================
-   Color Palette Reference
-========================== */
+@media (max-width: 1024px) {
+  #home {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
 
-/* Primary Palette
-Obsidian Blue – #0F1C2C
-Muted Jade – #4B6A57
-Warm Sand – #D9C9B3
-*/
-
-/* Accent Palette
-Coral Rust – #D9735D
-Iridescent Lavender – #A89BC8
-Faded Gold – #C2A05C
-*/
+  #navAndTitle,
+  #api {
+    width: 100%;
+  }
+}

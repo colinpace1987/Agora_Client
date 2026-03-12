@@ -1,101 +1,68 @@
-/* 
-
-Primary Palette
-
-Obsidian Blue – #0F1C2C
-Deep, almost-black blue; serves as a grounding neutral that feels rich and modern.
-
-Muted Jade – #4B6A57
-A dark green-gray; sophisticated, calming, and unusual for minimalism.
-
-Warm Sand – #D9C9B3
-Soft, warm neutral for contrast and light surfaces; elegant and approachable.
-
-
-
-Accent Palette
-
-Coral Rust – #D9735D
-A muted, earthy coral for highlights, buttons, and notifications; uncommon but warm.
-
-Iridescent Lavender – #A89BC8
-Soft lavender with gray undertones; adds a subtle, intellectual pop without overwhelming minimalism.
-
-Faded Gold – #C2A05C
-Gentle metallic hint for small details or micro-interactions; unusual and sophisticated.
-
-*/
-
-/* Reset box-sizing and margins */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.loginOrRegisterButton {
-  background-color: #D9735D; /* Coral Rust accent */
-  color: #fff;               /* White text for contrast */
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #D9735D;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  max-width: 300px;
-  margin: 0.5rem auto; /* Center buttons with some spacing */
-}
-
-/* Hover effect */
-.loginOrRegisterButton:hover {
-  background-color: #A89BC8; /* Iridescent Lavender on hover for sophistication */
-  border-color: #A89BC8;
-  color: #0F1C2C;            /* Obsidian Blue text on hover */
-}
-
-/* Active / pressed effect */
-.loginOrRegisterButton:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-}
-
-
+/* Landing layout */
 #landing {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-img {
-    height: 60%;
-    width: 90%;
+  display: grid;
+  grid-template-columns: minmax(280px, 1.2fr) minmax(240px, 0.8fr);
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, var(--sand), var(--mist));
 }
 
 #imgSide {
-    background-color: #0F1C2C;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 6;
+  background: radial-gradient(circle at top, #1d2a3b, #0f1c2c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+#imgSide img {
+  width: min(90%, 640px);
+  height: auto;
+  border-radius: 24px;
+  box-shadow: var(--shadow-strong);
 }
 
 #loginAndRegistrationSide {
-    background-color: #4B6A57;
-    flex: 4;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  gap: 1.5rem;
 }
 
-section {
-    height: 100vh;
+.loginOrRegisterButton {
+  background-color: var(--coral);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85rem 1.6rem;
+  border: 2px solid var(--coral);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 6px 16px rgba(20, 34, 53, 0.12);
+  max-width: 320px;
 }
 
+.loginOrRegisterButton:hover {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.loginOrRegisterButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 900px) {
+  #landing {
+    grid-template-columns: 1fr;
+  }
+
+  #imgSide {
+    padding: 2rem;
+  }
+}
