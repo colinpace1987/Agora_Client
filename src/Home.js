@@ -38,29 +38,17 @@ function Home( { buttonToLogout, user } ) {
       </section>
 
 
-      <section id = "main">
-
+      <section id="main">
         {
           display === "home" ? 
-
-            <Feed />
-
-              : display === "profile" ?
-
-                <Profile 
-                  user = { user }
-                /> 
-
-              : display === "forum" ?
-
-                <Forum />
-
-              : <Feed />
+            <Feed user={user} /> :
+            display === "profile" ?
+            <Profile user={user} /> :
+            display === "forum" ?
+            <Forum /> :
+            <Feed user={user} />
         }
-
-
       </section>
-
 
       <section id = "api">
         <button id = "logoutButton" onClick={logout}>
