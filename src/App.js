@@ -4,8 +4,9 @@ import Landing from "./Landing.js";
 import Home from "./Home.js";
 
 function App() {
-  let [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  let [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null); // stores { id, email }
+    
   function buttonToLogout() {
     setIsLoggedIn(false);
   }
@@ -22,7 +23,9 @@ function App() {
       })
       .then((data) => {
         console.log("Registration successful:", data);
-        return data;
+        setUser(data.user);      // store the user with id
+        setIsLoggedIn(true);     // mark as logged in
+        return data.user;        // return only the user object
       })
       .catch((err) => {
         console.error(err.message);
@@ -42,8 +45,9 @@ function App() {
       })
       .then((data) => {
         console.log("Login successful:", data);
-        setIsLoggedIn(true);
-        return data;
+        setUser(data.user);      // store the user with id
+        setIsLoggedIn(true);     // mark as logged in
+        return data.user;        // return only the user object
       })
       .catch((err) => {
         console.error(err.message);
@@ -60,6 +64,7 @@ function App() {
           <Home 
           
             buttonToLogout = { buttonToLogout }
+            user = { user }
 
           /> :
 

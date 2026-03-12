@@ -1,0 +1,30 @@
+#completeProfile {
+  background-color: #0a4d9e; /* Obsidian Blue */
+  color: #D9735D; /* Coral Rust text */
+  border: 2px solid #D9735D;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px; /* pill shape */
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+#completeProfile:hover {
+  background-color: #D9735D;
+  color: #0F1C2C;
+  box-shadow: 0 4px 10px rgba(15, 28, 44, 0.25);
+}
+
+/* Click */
+#completeProfile:active {
+  transform: scale(0.97);
+}
+
+/* Optional subtle focus glow */
+#completeProfile:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(217,115,93,0.6);
+}

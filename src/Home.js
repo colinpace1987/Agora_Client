@@ -4,7 +4,7 @@ import Feed from "./Feed.js";
 import Profile from "./Profile.js";
 import Forum from "./Forum.js";
 
-function Home( { buttonToLogout } ) {
+function Home( { buttonToLogout, user } ) {
   let [display, setDisplay] = useState("home");
 
   function logout() {
@@ -47,7 +47,9 @@ function Home( { buttonToLogout } ) {
 
               : display === "profile" ?
 
-                <Profile /> 
+                <Profile 
+                  user = { user }
+                /> 
 
               : display === "forum" ?
 
