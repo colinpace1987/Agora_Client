@@ -168,6 +168,9 @@
 }
 
 .discover-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 24px;
   padding: 2rem;
@@ -234,4 +237,23 @@
   .discover-content {
     grid-template-columns: 1fr;
   }
+}
+
+.discover-visit {
+  align-self: flex-start;
+  background-color: var(--coral);
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 6px 16px rgba(20, 34, 53, 0.18);
+}
+
+.discover-visit:hover {
+  background-color: var(--gold);
+  color: var(--ink);
+  transform: translateY(-1px);
 }

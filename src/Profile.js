@@ -2,10 +2,8 @@ import { useState } from 'react';
 import ProfileForm from "./ProfileForm.js";
 import ProfileInfo from "./ProfileInfo.js";
 
-export default function Profile({ user }) {
+export default function Profile({ user, profileUserId }) {
   const [fillProfile, setFillProfile] = useState(false);
-  
-  // ADD THIS: a trigger for re-fetching profile
   const [refreshProfile, setRefreshProfile] = useState(0);
 
   function fillInfo() {
@@ -16,22 +14,22 @@ export default function Profile({ user }) {
     setFillProfile(false);
   }
 
+  const viewingOwnProfile = !profileUserId || (user && profileUserId === user.id);
+
   return (
     <div>
-      {/* Pass user, refreshTrigger, and fillInfo */}
       <ProfileInfo 
-        user={user} 
-        refreshTrigger={refreshProfile} 
-        fillInfo={fillInfo}
-
+        user={user}
+        profileUserId={profileUserId}
+        refreshTrigger={refreshProfile}
+        fillInfo={viewingOwnProfile ? fillInfo : null}
       />
 
-      {/* Conditionally render ProfileForm as modal */}
-      {fillProfile && (
+      {viewingOwnProfile && fillProfile && (
         <ProfileForm
           user={user}
           closeModal={closeModal}
-          onSubmitComplete={() => setRefreshProfile(prev => prev + 1)} // increments trigger
+          onSubmitComplete={() => setRefreshProfile(prev => prev + 1)}
         />
       )}
     </div>

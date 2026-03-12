@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./Discover.css";
 
-export default function Discover({ user }) {
+export default function Discover({ user, onVisitProfile }) {
   const [profiles, setProfiles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [query, setQuery] = useState("");
@@ -65,6 +65,8 @@ export default function Discover({ user }) {
     [profiles, selectedId]
   );
 
+  const canVisit = !!selectedProfile && typeof onVisitProfile === "function";
+
   return (
     <div className="discover">
       <header className="discover-header">
@@ -116,7 +118,6 @@ export default function Discover({ user }) {
                     <span key={quality}>{quality}</span>
                   ))}
                 </div>
-                <span className="discover-cta">Visit profile</span>
               </button>
             ))
           )}
@@ -133,13 +134,6 @@ export default function Discover({ user }) {
                     {selectedProfile.degree || "No degree listed"}
                   </p>
                 </div>
-                {/* Uncomment when ready to enable following */}
-                {/* {user && (
-                  <FollowButton
-                    viewerId={user.id}
-                    profileId={selectedProfile.user_id}
-                  />
-                )} */}
               </div>
               <div className="discover-detail-body">
                 <div>
@@ -161,6 +155,15 @@ export default function Discover({ user }) {
                   </div>
                 </div>
               </div>
+              {canVisit && (
+                <button
+                  className="discover-visit"
+                  type="button"
+                  onClick={() => onVisitProfile(selectedProfile.user_id)}
+                >
+                  Visit profile
+                </button>
+              )}
             </>
           ) : (
             <div className="discover-empty">

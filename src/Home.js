@@ -7,6 +7,7 @@ import Discover from "./Discover.js";
 
 function Home( { buttonToLogout, user } ) {
   let [display, setDisplay] = useState("home");
+  const [selectedProfileId, setSelectedProfileId] = useState(null);
 
   function logout() {
     return buttonToLogout();
@@ -17,6 +18,7 @@ function Home( { buttonToLogout, user } ) {
   }
 
   function handleProfileClick() {
+    setSelectedProfileId(null);
     return setDisplay("profile");
   }
 
@@ -26,6 +28,11 @@ function Home( { buttonToLogout, user } ) {
 
   function handleDiscoverClick() {
     return setDisplay("discover");
+  }
+
+  function handleVisitProfile(profileUserId) {
+    setSelectedProfileId(profileUserId);
+    setDisplay("profile");
   }
   
   return (
@@ -49,11 +56,11 @@ function Home( { buttonToLogout, user } ) {
           display === "home" ? 
             <Feed user={user} /> :
             display === "profile" ?
-            <Profile user={user} /> :
+            <Profile user={user} profileUserId={selectedProfileId} /> :
             display === "forum" ?
-            <Forum /> :
+            <Forum user={user} /> :
             display === "discover" ?
-            <Discover user={user} /> :
+            <Discover user={user} onVisitProfile={handleVisitProfile} /> :
             <Feed user={user} />
         }
       </section>

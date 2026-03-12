@@ -2,54 +2,55 @@ import { useEffect, useState } from "react";
 import "./ProfileInfo.css";
 import FollowButton from "./FollowButton";
 
-function ProfileInfo({ user, fillInfo, refreshTrigger }) {
+function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch function can be called both on mount and after submit
-  const fetchProfile = async () => {
-    if (!user) return;
-    try {
-      const res = await fetch(`http://localhost:3000/profiles/${user.id}`);
-      if (!res.ok) throw new Error("Profile not found");
-      const data = await res.json();
-      setProfile(data);
-    } catch (err) {
-      console.log("No profile yet"); 
-      setProfile(null);
-    }
-  };
+  const targetUserId = profileUserId || user?.id;
+  const viewingOwnProfile = user && targetUserId === user.id;
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) return;
+      if (!targetUserId) {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const res = await fetch(`http://localhost:3000/profiles/${user.id}`);
+        setLoading(true);
+        const res = await fetch(`http://localhost:3000/profiles/${targetUserId}`);
         if (!res.ok) throw new Error("Profile not found");
         const data = await res.json();
         setProfile(data);
       } catch {
         setProfile(null);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [user, refreshTrigger]); // re-fetch when refreshTrigger changes
+  }, [targetUserId, refreshTrigger]);
+
   return (
     <div className="profile-info">
-      {user && (
+      {viewingOwnProfile && fillInfo && (
         <button id="completeProfile" onClick={fillInfo}>
           Complete Profile
         </button>
       )}
-{/* 
-      {user.id !== profileId && (
-        <FollowButton
-          user={user.id}
-          profileId={profileUser.id}
-        />
-      )} */}
 
-      {profile ? (
+      {!viewingOwnProfile && user && targetUserId && (
+        <FollowButton
+          viewerId={user.id}
+          profileId={targetUserId}
+        />
+      )}
+
+      {loading ? (
+        <p>Loading profile...</p>
+      ) : profile ? (
         <div>
           <h2>{profile.username}</h2>
           <p>Profession: {profile.profession}</p>
@@ -65,5 +66,3 @@ function ProfileInfo({ user, fillInfo, refreshTrigger }) {
 }
 
 export default ProfileInfo;
-
-
