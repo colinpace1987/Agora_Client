@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./Feed.css";
 
 const REPORT_REASONS = [
@@ -9,7 +9,7 @@ const REPORT_REASONS = [
   "Other",
 ];
 
-export default function Feed({ user }) {
+export default function Feed({ user, authToken }) {
   const [posts, setPosts] = useState([]);
   const [newContent, setNewContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -25,16 +25,29 @@ export default function Feed({ user }) {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
 
+  const authHeaders = useMemo(
+    () => (authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    [authToken]
+  );
+
   useEffect(() => {
     setPolicyAccepted(user?.has_acknowledged_policy ?? false);
   }, [user]);
 
-  const fetchPosts = async () => {
+  useEffect(() => {
+    const handleClick = () => setOpenMenuId(null);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
+  const fetchPosts = useCallback(async () => {
     if (!user) return;
 
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3000/posts/${user.id}`);
+      const res = await fetch(`http://localhost:3000/posts/${user.id}`, {
+        headers: authHeaders,
+      });
       if (!res.ok) throw new Error("Failed to fetch posts");
       const data = await res.json();
       setPosts(data);
@@ -44,17 +57,32 @@ export default function Feed({ user }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authHeaders, user]);
 
   useEffect(() => {
     fetchPosts();
-  }, [user]);
+  }, [fetchPosts]);
+
+  useEffect(() => {
+    if (!user) return;
+    const handleFocus = () => {
+      if (!document.hidden) {
+        fetchPosts();
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [fetchPosts, user]);
 
   const createPost = async () => {
     const res = await fetch("http://localhost:3000/posts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, content: newContent }),
+      headers: { "Content-Type": "application/json", ...authHeaders },
+      body: JSON.stringify({ content: newContent }),
     });
     if (!res.ok) throw new Error("Failed to create post");
 
@@ -84,8 +112,7 @@ export default function Feed({ user }) {
     if (!user) return;
     await fetch("http://localhost:3000/policy/acknowledge", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id }),
+      headers: { "Content-Type": "application/json", ...authHeaders },
     });
     setPolicyAccepted(true);
     setShowPolicy(false);
@@ -116,9 +143,8 @@ export default function Feed({ user }) {
 
     await fetch("http://localhost:3000/reports", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders },
       body: JSON.stringify({
-        reporterId: user.id,
         contentType: reportTarget.contentType,
         contentId: reportTarget.contentId,
         reason,
@@ -136,8 +162,7 @@ export default function Feed({ user }) {
     const res = await fetch(`http://localhost:3000/posts/${postId}`,
       {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        headers: { "Content-Type": "application/json", ...authHeaders },
       }
     );
 
@@ -182,13 +207,14 @@ export default function Feed({ user }) {
                     {new Date(post.created_at).toLocaleString()}
                   </span>
                 </p>
-                <div className="post-menu">
+                <div className="post-menu" onClick={(e) => e.stopPropagation()}>
                   <button
                     type="button"
                     className="post-menu-btn"
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === post.id ? null : post.id)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === post.id ? null : post.id);
+                    }}
                   >
                     ...
                   </button>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ProfileForm from "./ProfileForm.js";
 import ProfileInfo from "./ProfileInfo.js";
 
-export default function Profile({ user, profileUserId }) {
+export default function Profile({ user, profileUserId, authToken }) {
   const [fillProfile, setFillProfile] = useState(false);
   const [refreshProfile, setRefreshProfile] = useState(0);
 
@@ -23,6 +23,7 @@ export default function Profile({ user, profileUserId }) {
         profileUserId={profileUserId}
         refreshTrigger={refreshProfile}
         fillInfo={viewingOwnProfile ? fillInfo : null}
+        authToken={authToken}
       />
 
       {viewingOwnProfile && fillProfile && (
@@ -30,6 +31,7 @@ export default function Profile({ user, profileUserId }) {
           user={user}
           closeModal={closeModal}
           onSubmitComplete={() => setRefreshProfile(prev => prev + 1)}
+          authToken={authToken}
         />
       )}
     </div>

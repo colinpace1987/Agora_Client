@@ -20,8 +20,10 @@
 #api {
   background: rgba(75, 106, 87, 0.2);
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  align-items: center;
   padding: 2.5rem 1rem;
 }
 
@@ -90,6 +92,57 @@ li {
   list-style: none;
 }
 
+.account-panel {
+  width: 100%;
+  max-width: 220px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  font-family: "Inter", "Helvetica", sans-serif;
+}
+
+.account-panel h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.account-toggle {
+  border: none;
+  background: rgba(20, 34, 53, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.account-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.account-actions button {
+  border: none;
+  background: var(--coral);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.account-actions button.danger {
+  background: rgba(217, 115, 93, 0.2);
+  color: var(--coral);
+}
+
 @media (max-width: 1024px) {
   #home {
     grid-template-columns: 1fr;
@@ -99,5 +152,9 @@ li {
   #navAndTitle,
   #api {
     width: 100%;
+  }
+
+  .account-panel {
+    max-width: 100%;
   }
 }

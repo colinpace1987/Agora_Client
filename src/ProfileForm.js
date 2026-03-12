@@ -13,7 +13,7 @@ const qualitiesList = [
   "Communication",
 ];
 
-function ProfileForm({ closeModal, setProfileId, profileId, user, onSubmitComplete }) { 
+function ProfileForm({ closeModal, user, onSubmitComplete, authToken }) { 
   const [step, setStep] = useState(1);
   
   const [formData, setFormData] = useState({
@@ -23,6 +23,8 @@ function ProfileForm({ closeModal, setProfileId, profileId, user, onSubmitComple
     bio: "",
     qualities: [],
   });
+
+  const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,8 +49,8 @@ function ProfileForm({ closeModal, setProfileId, profileId, user, onSubmitComple
 
     return fetch("http://localhost:3000/profileForm", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ formData, userId: user.id }), // <-- include userId
+      headers: { "Content-Type": "application/json", ...authHeaders },
+      body: JSON.stringify({ formData }),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Profile form failed");
@@ -67,11 +69,11 @@ function ProfileForm({ closeModal, setProfileId, profileId, user, onSubmitComple
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-const handleSubmit = async () => {
-  await sendData(formData); // save to DB
-  closeModal();              // hide modal
-  if (onSubmitComplete) onSubmitComplete(); // refresh profile display
-};
+  const handleSubmit = async () => {
+    await sendData(formData);
+    closeModal();
+    if (onSubmitComplete) onSubmitComplete();
+  };
 
   return (
     <div className="modal-backdrop">

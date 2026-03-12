@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./Forum.css";
 
 const REPORT_REASONS = [
@@ -9,7 +9,7 @@ const REPORT_REASONS = [
   "Other",
 ];
 
-export default function Forum({ user }) {
+export default function Forum({ user, authToken }) {
   const [posts, setPosts] = useState([]);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -36,9 +36,24 @@ export default function Forum({ user }) {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
 
+  const authHeaders = useMemo(
+    () => (authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    [authToken]
+  );
+
   useEffect(() => {
     setPolicyAccepted(user?.has_acknowledged_policy ?? false);
   }, [user]);
+
+  useEffect(() => {
+    const handleClick = () => {
+      setOpenPostMenu(false);
+      setOpenCommentMenuId(null);
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
 
   const wordCount = useMemo(() => {
     return newPost.content.trim()
@@ -57,64 +72,67 @@ export default function Forum({ user }) {
   const canSaveEdit =
     editDraft.title.trim() && editDraft.content.trim() && editWordCount <= 1000;
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoadingPosts(true);
-        setError(null);
-        const res = await fetch("http://localhost:3000/forum/posts");
-        if (!res.ok) throw new Error("Failed to fetch forum posts");
-        const data = await res.json();
-        setPosts(data);
-        if (data.length > 0 && !selectedPostId) {
-          setSelectedPostId(data[0].id);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoadingPosts(false);
+  const fetchPosts = useCallback(async () => {
+    try {
+      setLoadingPosts(true);
+      setError(null);
+      const res = await fetch("http://localhost:3000/forum/posts", {
+        headers: authHeaders,
+      });
+      if (!res.ok) throw new Error("Failed to fetch forum posts");
+      const data = await res.json();
+      setPosts(data);
+      if (data.length > 0 && !selectedPostId) {
+        setSelectedPostId(data[0].id);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingPosts(false);
+    }
+  }, [authHeaders, selectedPostId]);
 
+  const fetchDetail = useCallback(async () => {
+    if (!selectedPostId) return;
+    try {
+      setLoadingDetail(true);
+      setError(null);
+      const postRes = await fetch(
+        `http://localhost:3000/forum/posts/${selectedPostId}`,
+        { headers: authHeaders }
+      );
+      if (!postRes.ok) throw new Error("Failed to load post");
+      const postData = await postRes.json();
+      setSelectedPost(postData);
+      setEditDraft({ title: postData.title, content: postData.content });
+
+      const commentRes = await fetch(
+        `http://localhost:3000/forum/posts/${selectedPostId}/comments`,
+        { headers: authHeaders }
+      );
+      if (!commentRes.ok) throw new Error("Failed to load comments");
+      const commentData = await commentRes.json();
+      setComments(commentData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingDetail(false);
+    }
+  }, [authHeaders, selectedPostId]);
+
+  useEffect(() => {
     fetchPosts();
-  }, [selectedPostId]);
+  }, [fetchPosts]);
 
   useEffect(() => {
-    const fetchDetail = async () => {
-      if (!selectedPostId) return;
-      try {
-        setLoadingDetail(true);
-        setError(null);
-        const postRes = await fetch(
-          `http://localhost:3000/forum/posts/${selectedPostId}`
-        );
-        if (!postRes.ok) throw new Error("Failed to load post");
-        const postData = await postRes.json();
-        setSelectedPost(postData);
-        setEditDraft({ title: postData.title, content: postData.content });
-
-        const commentRes = await fetch(
-          `http://localhost:3000/forum/posts/${selectedPostId}/comments`
-        );
-        if (!commentRes.ok) throw new Error("Failed to load comments");
-        const commentData = await commentRes.json();
-        setComments(commentData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoadingDetail(false);
-      }
-    };
-
     fetchDetail();
-  }, [selectedPostId]);
+  }, [fetchDetail]);
 
   const acknowledgePolicy = async () => {
     if (!user) return;
     await fetch("http://localhost:3000/policy/acknowledge", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id }),
+      headers: { "Content-Type": "application/json", ...authHeaders },
     });
     setPolicyAccepted(true);
     setShowPolicy(false);
@@ -133,9 +151,8 @@ export default function Forum({ user }) {
     try {
       const res = await fetch("http://localhost:3000/forum/posts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({
-          userId: user.id,
           title: newPost.title,
           content: newPost.content,
         }),
@@ -159,8 +176,8 @@ export default function Forum({ user }) {
         `http://localhost:3000/forum/posts/${selectedPostId}/comments`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id, content: newComment }),
+          headers: { "Content-Type": "application/json", ...authHeaders },
+          body: JSON.stringify({ content: newComment }),
         }
       );
       if (!res.ok) throw new Error("Failed to add comment");
@@ -196,9 +213,8 @@ export default function Forum({ user }) {
 
     await fetch("http://localhost:3000/reports", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders },
       body: JSON.stringify({
-        reporterId: user.id,
         contentType: reportTarget.contentType,
         contentId: reportTarget.contentId,
         reason,
@@ -216,8 +232,7 @@ export default function Forum({ user }) {
     const res = await fetch(`http://localhost:3000/forum/posts/${postId}`,
       {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        headers: { "Content-Type": "application/json", ...authHeaders },
       }
     );
 
@@ -248,22 +263,34 @@ export default function Forum({ user }) {
     const res = await fetch(`http://localhost:3000/forum/posts/${selectedPost.id}`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({
-          userId: user.id,
           title: editDraft.title,
           content: editDraft.content,
         }),
       }
     );
 
-    if (!res.ok) return;
+    if (!res.ok) {
+      let detail = "";
+      try {
+        const body = await res.json();
+        detail = body?.error || body?.detail || JSON.stringify(body);
+      } catch {
+        detail = await res.text();
+      }
+      setError(detail ? `Failed to update forum post: ${detail}` : "Failed to update forum post");
+      return;
+    }
     const updated = await res.json();
-    setSelectedPost(updated);
+    setSelectedPost((prev) => ({ ...prev, ...updated }));
     setPosts((prev) =>
       prev.map((post) => (post.id === updated.id ? { ...post, ...updated } : post))
     );
+    setEditDraft({ title: updated.title, content: updated.content });
     setEditing(false);
+    await fetchDetail();
+    await fetchPosts();
   };
 
   return (
@@ -298,7 +325,7 @@ export default function Forum({ user }) {
               >
                 <h2>{post.title}</h2>
                 <p className="forum-meta">
-                  {post.email || "Unknown"} ·{" "}
+                  {post.username || post.email || "Unknown"} ·{" "}
                   {new Date(post.created_at).toLocaleDateString()}
                 </p>
                 <p className="forum-excerpt">
@@ -373,17 +400,20 @@ export default function Forum({ user }) {
                       <>
                         <h2>{selectedPost.title}</h2>
                         <p className="forum-meta">
-                          {selectedPost.email || "Unknown"} ·{" "}
+                          {selectedPost.username || selectedPost.email || "Unknown"} ·{" "}
                           {new Date(selectedPost.created_at).toLocaleString()}
                         </p>
                       </>
                     )}
                   </div>
-                  <div className="post-menu">
+                  <div className="post-menu" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       className="post-menu-btn"
-                      onClick={() => setOpenPostMenu((prev) => !prev)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenPostMenu((prev) => !prev);
+                      }}
                     >
                       ...
                     </button>
@@ -444,18 +474,19 @@ export default function Forum({ user }) {
                       <div key={comment.id} className="forum-comment">
                         <div className="forum-comment-header">
                           <p className="forum-meta">
-                            {comment.email || "Unknown"} ·{" "}
+                            {comment.username || comment.email || "Unknown"} ·{" "}
                             {new Date(comment.created_at).toLocaleString()}
                           </p>
-                          <div className="post-menu">
+                          <div className="post-menu" onClick={(e) => e.stopPropagation()}>
                             <button
                               type="button"
                               className="post-menu-btn"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setOpenCommentMenuId(
                                   openCommentMenuId === comment.id ? null : comment.id
-                                )
-                              }
+                                );
+                              }}
                             >
                               ...
                             </button>

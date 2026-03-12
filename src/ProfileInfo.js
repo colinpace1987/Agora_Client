@@ -2,19 +2,15 @@ import { useEffect, useState } from "react";
 import "./ProfileInfo.css";
 import FollowButton from "./FollowButton";
 
-function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
+function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId, authToken }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isPrivate, setIsPrivate] = useState(user?.is_private ?? false);
   const [requests, setRequests] = useState([]);
 
   const targetUserId = profileUserId || user?.id;
   const viewingOwnProfile = user && targetUserId === user.id;
-
-  useEffect(() => {
-    setIsPrivate(user?.is_private ?? false);
-  }, [user]);
+  const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,8 +23,9 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
       try {
         setLoading(true);
         setError("");
-        const viewerQuery = user?.id ? `?viewer=${user.id}` : "";
-        const res = await fetch(`http://localhost:3000/profiles/${targetUserId}${viewerQuery}`);
+        const res = await fetch(`http://localhost:3000/profiles/${targetUserId}`, {
+          headers: authHeaders,
+        });
         if (res.status === 403) {
           setProfile(null);
           setError("This profile is private.");
@@ -45,7 +42,7 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
     };
 
     fetchProfile();
-  }, [targetUserId, refreshTrigger, user]);
+  }, [targetUserId, refreshTrigger, authToken]);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -53,7 +50,9 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
       if (!viewingOwnProfile) return;
 
       try {
-        const res = await fetch(`http://localhost:3000/follow/requests?userId=${user.id}`);
+        const res = await fetch(`http://localhost:3000/follow/requests`, {
+          headers: authHeaders,
+        });
         if (!res.ok) return;
         const data = await res.json();
         setRequests(data);
@@ -63,22 +62,12 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
     };
 
     fetchRequests();
-  }, [user, viewingOwnProfile]);
-
-  const togglePrivacy = async () => {
-    if (!user) return;
-    const next = !isPrivate;
-    setIsPrivate(next);
-    await fetch("http://localhost:3000/account/privacy", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, isPrivate: next }),
-    });
-  };
+  }, [user, viewingOwnProfile, authToken]);
 
   const approveRequest = async (requestId) => {
     await fetch(`http://localhost:3000/follow/requests/${requestId}/approve`, {
       method: "POST",
+      headers: authHeaders,
     });
     setRequests((prev) => prev.filter((req) => req.id !== requestId));
   };
@@ -86,33 +75,9 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
   const rejectRequest = async (requestId) => {
     await fetch(`http://localhost:3000/follow/requests/${requestId}`, {
       method: "DELETE",
+      headers: authHeaders,
     });
     setRequests((prev) => prev.filter((req) => req.id !== requestId));
-  };
-
-  const handleDeactivate = async () => {
-    if (!user) return;
-    await fetch("http://localhost:3000/account/deactivate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id }),
-    });
-    alert("Account deactivated. Please refresh to log out.");
-  };
-
-  const handleExport = async () => {
-    if (!user) return;
-    const res = await fetch(`http://localhost:3000/account/export/${user.id}`);
-    const data = await res.json();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "agora-export.json";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -123,25 +88,11 @@ function ProfileInfo({ user, fillInfo, refreshTrigger, profileUserId }) {
         </button>
       )}
 
-      {viewingOwnProfile && (
-        <div className="profile-settings">
-          <div className="profile-toggle">
-            <span>Private account</span>
-            <button type="button" onClick={togglePrivacy}>
-              {isPrivate ? "On" : "Off"}
-            </button>
-          </div>
-          <div className="profile-actions">
-            <button type="button" onClick={handleExport}>Export My Data</button>
-            <button type="button" onClick={handleDeactivate} className="danger">Deactivate Account</button>
-          </div>
-        </div>
-      )}
-
       {!viewingOwnProfile && user && targetUserId && (
         <FollowButton
           viewerId={user.id}
           profileId={targetUserId}
+          authToken={authToken}
         />
       )}
 

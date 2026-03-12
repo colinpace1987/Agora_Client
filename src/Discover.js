@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import "./Discover.css";
 
-export default function Discover({ user, onVisitProfile }) {
+export default function Discover({ user, onVisitProfile, authToken }) {
   const [profiles, setProfiles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:3000/profiles");
+        const res = await fetch("http://localhost:3000/profiles", {
+          headers: authHeaders,
+        });
         if (!res.ok) {
           let detail = "";
           const raw = await res.text();
@@ -40,7 +44,7 @@ export default function Discover({ user, onVisitProfile }) {
     };
 
     fetchProfiles();
-  }, [user]);
+  }, [user, authToken]);
 
   const visibleProfiles = useMemo(() => {
     const term = query.trim().toLowerCase();

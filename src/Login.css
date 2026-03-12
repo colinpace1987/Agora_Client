@@ -1,7 +1,8 @@
 .container {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
   padding: 0;
   background: transparent;
@@ -34,7 +35,8 @@
   margin-bottom: 0.25rem;
 }
 
-.form .input {
+.form .input,
+.reset-form .input {
   width: 100%;
   padding: 0.8rem 1rem;
   border: 1px solid rgba(20, 34, 53, 0.18);
@@ -45,7 +47,8 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form .input:focus {
+.form .input:focus,
+.reset-form .input:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 4px rgba(194, 160, 92, 0.2);
   outline: none;
@@ -78,4 +81,58 @@
 
 .form .button:active {
   transform: translateY(0);
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--jade);
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+  padding: 0;
+}
+
+.reset-status {
+  color: var(--slate);
+  font-size: 0.85rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 34, 53, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal.reset-modal {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 20px;
+  width: min(420px, 92vw);
+  box-shadow: var(--shadow-strong);
+  font-family: "Inter", "Helvetica", sans-serif;
+}
+
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.reset-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.reset-actions button {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
 }
