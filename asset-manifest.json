@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/agora_client/static/css/main.3422e9e4.css",
-    "main.js": "/agora_client/static/js/main.e6a782d6.js",
-    "static/media/hero.png": "/agora_client/static/media/hero.9d0002d53b3f4ba7ebf5.png",
-    "index.html": "/agora_client/index.html",
-    "main.3422e9e4.css.map": "/agora_client/static/css/main.3422e9e4.css.map",
-    "main.e6a782d6.js.map": "/agora_client/static/js/main.e6a782d6.js.map"
+    "main.css": "/Agora_Client/static/css/main.3422e9e4.css",
+    "main.js": "/Agora_Client/static/js/main.87c9fc2d.js",
+    "static/media/hero.png": "/Agora_Client/static/media/hero.9d0002d53b3f4ba7ebf5.png",
+    "index.html": "/Agora_Client/index.html",
+    "main.3422e9e4.css.map": "/Agora_Client/static/css/main.3422e9e4.css.map",
+    "main.87c9fc2d.js.map": "/Agora_Client/static/js/main.87c9fc2d.js.map"
   },
   "entrypoints": [
     "static/css/main.3422e9e4.css",
-    "static/js/main.e6a782d6.js"
+    "static/js/main.87c9fc2d.js"
   ]
 }
