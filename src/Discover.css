@@ -257,3 +257,13 @@
   color: var(--ink);
   transform: translateY(-1px);
 }
+
+.discover-private {
+  align-self: flex-start;
+  background: rgba(20, 34, 53, 0.08);
+  color: var(--slate);
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}

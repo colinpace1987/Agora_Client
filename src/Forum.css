@@ -103,16 +103,21 @@
 
 .forum-compose input,
 .forum-compose textarea,
-.forum-comment-form textarea {
+.forum-comment-form textarea,
+.forum-thread input,
+.forum-thread textarea {
   border-radius: 14px;
   border: 1px solid rgba(20, 34, 53, 0.2);
   padding: 0.75rem 0.9rem;
   font-size: 0.95rem;
+  font-family: "Inter", "Helvetica", sans-serif;
 }
 
 .forum-compose textarea:focus,
 .forum-comment-form textarea:focus,
-.forum-compose input:focus {
+.forum-compose input:focus,
+.forum-thread input:focus,
+.forum-thread textarea:focus {
   outline: none;
   border-color: var(--gold);
   box-shadow: 0 0 0 4px rgba(194, 160, 92, 0.2);
@@ -159,6 +164,37 @@
   font-family: "Inter", "Helvetica", sans-serif;
 }
 
+.forum-thread-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.forum-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.forum-edit-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.forum-edit-actions button {
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.forum-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .forum-body {
   line-height: 1.7;
   white-space: pre-wrap;
@@ -189,6 +225,121 @@
 
 .forum-status.error {
   color: var(--coral);
+}
+
+.post-menu {
+  position: relative;
+}
+
+.post-menu-btn {
+  border: none;
+  background: transparent;
+  color: var(--slate);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.post-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 1.5rem;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+  padding: 0.4rem 0.6rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 180px;
+  white-space: nowrap;
+}
+
+.post-menu-dropdown button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--coral);
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  white-space: nowrap;
+}
+
+.policy-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 34, 53, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.policy-modal,
+.report-modal {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 20px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: var(--shadow-strong);
+  font-family: "Inter", "Helvetica", sans-serif;
+}
+
+.policy-check {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+}
+
+.policy-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.policy-actions button {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.report-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.report-option {
+  border: 1px solid rgba(20, 34, 53, 0.15);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.report-option.active {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.report-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.report-details textarea {
+  border-radius: 12px;
+  border: 1px solid rgba(20, 34, 53, 0.2);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  font-family: "Inter", "Helvetica", sans-serif;
 }
 
 @media (max-width: 900px) {

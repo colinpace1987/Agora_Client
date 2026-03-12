@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import "./Forum.css";
 
+const REPORT_REASONS = [
+  "Spam",
+  "Harassment or hate",
+  "Misinformation",
+  "Graphic or violent content",
+  "Other",
+];
+
 export default function Forum({ user }) {
   const [posts, setPosts] = useState([]);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -13,14 +21,41 @@ export default function Forum({ user }) {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const [newComment, setNewComment] = useState("");
 
+  const [showPolicy, setShowPolicy] = useState(false);
+  const [policyChecked, setPolicyChecked] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(
+    user?.has_acknowledged_policy ?? false
+  );
+
+  const [openPostMenu, setOpenPostMenu] = useState(false);
+  const [openCommentMenuId, setOpenCommentMenuId] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [editDraft, setEditDraft] = useState({ title: "", content: "" });
+
+  const [reportTarget, setReportTarget] = useState(null);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+
+  useEffect(() => {
+    setPolicyAccepted(user?.has_acknowledged_policy ?? false);
+  }, [user]);
+
   const wordCount = useMemo(() => {
     return newPost.content.trim()
       ? newPost.content.trim().split(/\s+/).length
       : 0;
   }, [newPost.content]);
 
+  const editWordCount = useMemo(() => {
+    return editDraft.content.trim()
+      ? editDraft.content.trim().split(/\s+/).length
+      : 0;
+  }, [editDraft.content]);
+
   const canSubmitPost =
     newPost.title.trim() && newPost.content.trim() && wordCount <= 1000;
+  const canSaveEdit =
+    editDraft.title.trim() && editDraft.content.trim() && editWordCount <= 1000;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -47,15 +82,16 @@ export default function Forum({ user }) {
   useEffect(() => {
     const fetchDetail = async () => {
       if (!selectedPostId) return;
-      setError(null);
       try {
         setLoadingDetail(true);
+        setError(null);
         const postRes = await fetch(
           `http://localhost:3000/forum/posts/${selectedPostId}`
         );
         if (!postRes.ok) throw new Error("Failed to load post");
         const postData = await postRes.json();
         setSelectedPost(postData);
+        setEditDraft({ title: postData.title, content: postData.content });
 
         const commentRes = await fetch(
           `http://localhost:3000/forum/posts/${selectedPostId}/comments`
@@ -73,9 +109,26 @@ export default function Forum({ user }) {
     fetchDetail();
   }, [selectedPostId]);
 
+  const acknowledgePolicy = async () => {
+    if (!user) return;
+    await fetch("http://localhost:3000/policy/acknowledge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id }),
+    });
+    setPolicyAccepted(true);
+    setShowPolicy(false);
+    setPolicyChecked(false);
+  };
+
   const handlePostSubmit = async (event) => {
     event.preventDefault();
     if (!user) return;
+
+    if (!policyAccepted) {
+      setShowPolicy(true);
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:3000/forum/posts", {
@@ -124,6 +177,93 @@ export default function Forum({ user }) {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const openReportModal = (contentType, contentId) => {
+    setReportTarget({ contentType, contentId });
+    setReportReason("");
+    setReportDetails("");
+    setOpenPostMenu(false);
+    setOpenCommentMenuId(null);
+  };
+
+  const submitReport = async () => {
+    if (!user || !reportTarget || !reportReason) return;
+
+    const reason = reportDetails.trim()
+      ? `${reportReason}: ${reportDetails.trim()}`
+      : reportReason;
+
+    await fetch("http://localhost:3000/reports", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reporterId: user.id,
+        contentType: reportTarget.contentType,
+        contentId: reportTarget.contentId,
+        reason,
+      }),
+    });
+
+    setReportTarget(null);
+    setReportReason("");
+    setReportDetails("");
+  };
+
+  const deletePost = async (postId) => {
+    if (!user) return;
+
+    const res = await fetch(`http://localhost:3000/forum/posts/${postId}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      }
+    );
+
+    if (res.ok) {
+      setPosts((prev) => prev.filter((post) => post.id !== postId));
+      setSelectedPostId(null);
+      setSelectedPost(null);
+      setOpenPostMenu(false);
+    }
+  };
+
+  const startEdit = () => {
+    if (!selectedPost) return;
+    setEditDraft({ title: selectedPost.title, content: selectedPost.content });
+    setEditing(true);
+    setOpenPostMenu(false);
+  };
+
+  const cancelEdit = () => {
+    if (!selectedPost) return;
+    setEditDraft({ title: selectedPost.title, content: selectedPost.content });
+    setEditing(false);
+  };
+
+  const saveEdit = async () => {
+    if (!user || !selectedPost) return;
+
+    const res = await fetch(`http://localhost:3000/forum/posts/${selectedPost.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          title: editDraft.title,
+          content: editDraft.content,
+        }),
+      }
+    );
+
+    if (!res.ok) return;
+    const updated = await res.json();
+    setSelectedPost(updated);
+    setPosts((prev) =>
+      prev.map((post) => (post.id === updated.id ? { ...post, ...updated } : post))
+    );
+    setEditing(false);
   };
 
   return (
@@ -211,12 +351,89 @@ export default function Forum({ user }) {
               <p className="forum-status">Loading thread...</p>
             ) : selectedPost ? (
               <>
-                <h2>{selectedPost.title}</h2>
-                <p className="forum-meta">
-                  {selectedPost.email || "Unknown"} ·{" "}
-                  {new Date(selectedPost.created_at).toLocaleString()}
-                </p>
-                <p className="forum-body">{selectedPost.content}</p>
+                <div className="forum-thread-header">
+                  <div>
+                    {editing ? (
+                      <>
+                        <input
+                          type="text"
+                          value={editDraft.title}
+                          onChange={(event) =>
+                            setEditDraft((prev) => ({
+                              ...prev,
+                              title: event.target.value,
+                            }))
+                          }
+                        />
+                        <div className={`forum-word-count${editWordCount > 1000 ? " over" : ""}`}>
+                          {editWordCount} / 1000 words
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <h2>{selectedPost.title}</h2>
+                        <p className="forum-meta">
+                          {selectedPost.email || "Unknown"} ·{" "}
+                          {new Date(selectedPost.created_at).toLocaleString()}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <div className="post-menu">
+                    <button
+                      type="button"
+                      className="post-menu-btn"
+                      onClick={() => setOpenPostMenu((prev) => !prev)}
+                    >
+                      ...
+                    </button>
+                    {openPostMenu && (
+                      <div className="post-menu-dropdown">
+                        <button
+                          type="button"
+                          onClick={() => openReportModal("forum_post", selectedPost.id)}
+                        >
+                          Report a problem
+                        </button>
+                        {selectedPost.user_id === user?.id && (
+                          <>
+                            <button type="button" onClick={startEdit}>
+                              Edit
+                            </button>
+                            <button type="button" onClick={() => deletePost(selectedPost.id)}>
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {editing ? (
+                  <div className="forum-edit">
+                    <textarea
+                      rows={6}
+                      value={editDraft.content}
+                      onChange={(event) =>
+                        setEditDraft((prev) => ({
+                          ...prev,
+                          content: event.target.value,
+                        }))
+                      }
+                    />
+                    <div className="forum-edit-actions">
+                      <button type="button" onClick={cancelEdit}>
+                        Cancel
+                      </button>
+                      <button type="button" onClick={saveEdit} disabled={!canSaveEdit}>
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="forum-body">{selectedPost.content}</p>
+                )}
 
                 <div className="forum-comments">
                   <h3>Comments</h3>
@@ -225,10 +442,37 @@ export default function Forum({ user }) {
                   ) : (
                     comments.map((comment) => (
                       <div key={comment.id} className="forum-comment">
-                        <p className="forum-meta">
-                          {comment.email || "Unknown"} ·{" "}
-                          {new Date(comment.created_at).toLocaleString()}
-                        </p>
+                        <div className="forum-comment-header">
+                          <p className="forum-meta">
+                            {comment.email || "Unknown"} ·{" "}
+                            {new Date(comment.created_at).toLocaleString()}
+                          </p>
+                          <div className="post-menu">
+                            <button
+                              type="button"
+                              className="post-menu-btn"
+                              onClick={() =>
+                                setOpenCommentMenuId(
+                                  openCommentMenuId === comment.id ? null : comment.id
+                                )
+                              }
+                            >
+                              ...
+                            </button>
+                            {openCommentMenuId === comment.id && (
+                              <div className="post-menu-dropdown">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    openReportModal("forum_comment", comment.id)
+                                  }
+                                >
+                                  Report a problem
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                         <p>{comment.content}</p>
                       </div>
                     ))
@@ -254,6 +498,80 @@ export default function Forum({ user }) {
           </div>
         </aside>
       </section>
+
+      {showPolicy && (
+        <div className="policy-backdrop">
+          <div className="policy-modal">
+            <h3>Community Guidelines</h3>
+            <p>
+              Please keep posts respectful, avoid harassment or hate, and don’t
+              share private information. Content that violates these guidelines
+              may be removed.
+            </p>
+            <label className="policy-check">
+              <input
+                type="checkbox"
+                checked={policyChecked}
+                onChange={(event) => setPolicyChecked(event.target.checked)}
+              />
+              I agree to follow these guidelines.
+            </label>
+            <div className="policy-actions">
+              <button type="button" onClick={() => setShowPolicy(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!policyChecked}
+                onClick={acknowledgePolicy}
+              >
+                Agree and continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {reportTarget && (
+        <div className="policy-backdrop">
+          <div className="report-modal">
+            <h3>Report a problem</h3>
+            <p>What best describes the issue?</p>
+            <div className="report-options">
+              {REPORT_REASONS.map((reason) => (
+                <button
+                  key={reason}
+                  type="button"
+                  className={`report-option${reportReason === reason ? " active" : ""}`}
+                  onClick={() => setReportReason(reason)}
+                >
+                  {reason}
+                </button>
+              ))}
+            </div>
+            <label className="report-details">
+              Additional details (optional)
+              <textarea
+                rows={3}
+                value={reportDetails}
+                onChange={(event) => setReportDetails(event.target.value)}
+              />
+            </label>
+            <div className="policy-actions">
+              <button type="button" onClick={() => setReportTarget(null)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!reportReason}
+                onClick={submitReport}
+              >
+                Submit report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

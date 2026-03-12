@@ -112,6 +112,7 @@ export default function Discover({ user, onVisitProfile }) {
                   <h2>{profile.username}</h2>
                   <span>{profile.profession || "No profession listed"}</span>
                 </div>
+                {profile.is_private && <span className="discover-private">Private</span>}
                 <p>{profile.bio || "No bio added yet."}</p>
                 <div className="discover-tags">
                   {(profile.qualities || []).slice(0, 3).map((quality) => (
